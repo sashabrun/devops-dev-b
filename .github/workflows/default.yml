@@ -1,0 +1,73 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build and push Docker images
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/back ./back
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/front ./front
+          docker push ${{ secrets.DOCKER_USERNAME }}/back
+          docker push ${{ secrets.DOCKER_USERNAME }}/front
+
+  deploy-back:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy backend to Scaleway
+        uses: scaleway/action-deploy@v1
+        with:
+          access-key: ${{ secrets.SCALEWAY_ACCESS_KEY }}
+          secret-key: ${{ secrets.SCALEWAY_SECRET_KEY }}
+          organization-id: ${{ secrets.SCALEWAY_ORGANIZATION_ID }}
+          region: par1
+          service-id: ${{ secrets.SCALEWAY_BACK_SERVICE_ID }}
+          image: ${{ secrets.DOCKER_USERNAME }}/back
+          name: back
+          ports: '3000'
+          env: NODE_ENV=production
+          restart: always
+          wait: true
+
+  deploy-front:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy frontend to Scaleway
+        uses: scaleway/action-deploy@v1
+        with:
+          access-key: ${{ secrets.SCALEWAY_ACCESS_KEY }}
+          secret-key: ${{ secrets.SCALEWAY_SECRET_KEY }}
+          organization-id: ${{ secrets.SCALEWAY_ORGANIZATION_ID }}
+          region: par1
+          service-id: ${{ secrets.SCALEWAY_FRONT_SERVICE_ID }}
+          image: ${{ secrets.DOCKER_USERNAME }}/front
+          name: front
+          ports: '80'
+          env: NODE_ENV=production
+          restart: always
+          wait: true
