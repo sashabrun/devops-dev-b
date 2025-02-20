@@ -9,7 +9,7 @@ RUN npm install
 COPY . .
 
 RUN npx prisma generate
-RUN npx prisma migrate dev --name init
+RUN npx prisma db push
 
 EXPOSE 3000
 

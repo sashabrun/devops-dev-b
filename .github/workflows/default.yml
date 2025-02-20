@@ -37,6 +37,7 @@ jobs:
           docker build -t front ./front
           docker tag back:latest ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/back:latest
           docker tag front:latest ${{ secrets.CONTAINER_REGISTRY_ENDPOINT }}/front:latest
+          
 
   deploy-back:
     runs-on: ubuntu-latest
