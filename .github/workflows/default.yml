@@ -18,7 +18,12 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install dependencies
+      - name: Install dependencies back
+        working-directory: ./back
+        run: npm install
+
+      - name: Install dependencies front
+        working-directory: ./front
         run: npm install
 
       - name: Run tests
