@@ -26,7 +26,12 @@ jobs:
         working-directory: ./front
         run: npm install
 
-      - name: Run tests
+      - name: Run tests for backend
+        working-directory: ./back
+        run: npm test
+
+      - name: Run tests for frontend
+        working-directory: ./front
         run: npm test
 
       - name: Build and push Docker images
