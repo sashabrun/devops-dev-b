@@ -14,3 +14,4 @@ RUN npx prisma db push
 EXPOSE 3000
 
 CMD ["npm", "start"]
+
