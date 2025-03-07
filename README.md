@@ -3,8 +3,11 @@
 ## Project Overview
 This project contains the source code of store application.
 
-On the `back` folder, you will find the source code of the API, developed with express and node.
+On the `back` folder, you will find the source code of the API, developed with express and node.  
 On the `front` folder, you will find the source code of the front-end application, developed with Vue3.
+
+## Scaleway Image Build (Failed)
+I have prepared everything to build the image on Scaleway, but I was unable to get it working.
 
 ## Installation
 
